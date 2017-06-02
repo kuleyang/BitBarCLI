@@ -3,3 +3,7 @@
 ## Build
 
 `swift build`
+
+## Tests
+
+`swift test`
