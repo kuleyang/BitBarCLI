@@ -1,0 +1,36 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "Just",
+      "reason": null,
+      "repositoryURL": "https://github.com/JustHTTP/Just.git",
+      "version": "0.6.0"
+    },
+    {
+      "package": "Rainbow",
+      "reason": null,
+      "repositoryURL": "https://github.com/onevcat/Rainbow",
+      "version": "2.0.1"
+    },
+    {
+      "package": "SocketIO",
+      "reason": null,
+      "repositoryURL": "https://github.com/socketio/socket.io-client-swift.git",
+      "version": "10.0.0"
+    },
+    {
+      "package": "SwiftCLI",
+      "reason": null,
+      "repositoryURL": "https://github.com/jakeheis/SwiftCLI.git",
+      "version": "3.0.1"
+    },
+    {
+      "package": "SwiftyJSON",
+      "reason": null,
+      "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
+      "version": "3.1.4"
+    }
+  ],
+  "version": 1
+}
