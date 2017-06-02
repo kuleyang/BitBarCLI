@@ -1,4 +1,4 @@
-# [![Build Status](https://travis-ci.org/oleander/BitBarCLI.svg?branch=master)](https://travis-ci.org/oleander/BitBarCLI)
+# BitBar CLI - [![Build Status](https://travis-ci.org/oleander/BitBarCLI.svg?branch=master)](https://travis-ci.org/oleander/BitBarCLI)
 
 ## Usage
 
