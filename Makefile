@@ -1,3 +1,5 @@
 run:
-	ls Sources/*.swift | entr bash -c 'swift build && ./.build/debug/BitBarCli plugins-refresh hello.10m.sh'
-#  2>&1 | xcpretty
+	ls Sources/*.swift | entr bash -c 'swift build && ./.build/debug/BitBarCli plugins:list'
+install:
+	swift build -c release
+	ln -srf ./.build/release/BitBarCli /usr/local/bin/bitbar

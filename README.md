@@ -21,3 +21,7 @@ Available commands:
 ## Tests
 
 `swift test`
+
+## Install
+
+`make install`
