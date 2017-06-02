@@ -14,10 +14,10 @@
       "version": "2.0.1"
     },
     {
-      "package": "SocketIO",
+      "package": "Starscream",
       "reason": null,
-      "repositoryURL": "https://github.com/socketio/socket.io-client-swift.git",
-      "version": "10.0.0"
+      "repositoryURL": "https://github.com/daltoniam/Starscream.git",
+      "version": "2.0.4"
     },
     {
       "package": "SwiftCLI",
