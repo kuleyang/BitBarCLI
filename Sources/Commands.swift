@@ -1,5 +1,6 @@
 import SwiftCLI
 import Foundation
+import SwiftyJSON
 import Starscream
 
 class InvokePluginCommand: Command {
@@ -9,7 +10,7 @@ class InvokePluginCommand: Command {
   let shortDescription = "Invoke plugin"
 
   func execute() throws {
-    post("/plugin/\(plugin.value)/args/\(args.value.joined(separator: "/"))/invoke")
+    patch("/plugin/\(plugin.value)/args/\(args.value.joined(separator: "/"))/invoke")
   }
 }
 
@@ -19,7 +20,7 @@ class ShowPluginCommand: Command {
   let shortDescription = "Make plugin visible"
 
   func execute() throws {
-    post("/plugin/\(plugin.value)/show")
+    patch("/plugin/\(plugin.value)/show")
   }
 }
 
@@ -29,7 +30,17 @@ class HidePluginCommand: Command {
   let shortDescription = "Hide plugin"
 
   func execute() throws {
-    post("/plugin/\(plugin.value)/hide")
+    patch("/plugin/\(plugin.value)/hide")
+  }
+}
+
+class InfoPluginCommand: Command {
+  let name = "plugin"
+  let plugin = Parameter()
+  let shortDescription = "Display info about a plugin"
+
+  func execute() throws {
+    get("/plugin/\(plugin.value)")
   }
 }
 
@@ -39,7 +50,7 @@ class RefreshPluginCommand: Command {
   let shortDescription = "Refresh plugin"
 
   func execute() throws {
-    post("/plugin/\(plugin.value)/refresh")
+    patch("/plugin/\(plugin.value)/refresh")
   }
 }
 
@@ -57,7 +68,7 @@ class RefreshPluginsCommand: Command {
   let shortDescription = "Refresh all plugins"
 
   func execute() throws {
-    post("/plugins/refresh")
+    patch("/plugins/refresh")
   }
 }
 
@@ -69,7 +80,7 @@ class GetStoreValueCommand: Command {
   let shortDescription = "Get value from store"
 
   func execute() throws {
-    raw("/plugin/\(plugin.value)/store/key/\(key.value)/default/\(`default`.value)")
+    get("/plugin/\(plugin.value)/store/key/\(key.value)/default/\(`default`.value)")
   }
 }
 
@@ -81,7 +92,7 @@ class SetStoreValueCommand: Command {
   let shortDescription = "Set value from store"
 
   func execute() throws {
-    post("/plugin/\(plugin.value)/store/key/\(key.value)/value/\(value.value)")
+    patch("/plugin/\(plugin.value)/store/key/\(key.value)/value/\(value.value)")
   }
 }
 
@@ -92,7 +103,7 @@ class PushStoreValueCommand: Command {
   let shortDescription = "Push value to local storage"
 
   func execute() throws {
-    post("/plugin/\(plugin.value)/store/list/\(value.value)")
+    patch("/plugin/\(plugin.value)/store/list/\(value.value)")
   }
 }
 
@@ -117,31 +128,38 @@ class ClearListCommand: Command {
 }
 
 class LogPluginCommand: Command {
-  let name = "plugin:log"
-  let plugin = Parameter()
-  let shortDescription = "Live loggin for plugin"
+  let name = "log"
+  let shortDescription = "Live stream of application log"
+  let path = "ws://\(hostDomain)/log"
 
   func execute() throws {
-    guard let url = URL(string: "ws://\(hostDomain)/plugin/\(plugin.value)/log") else {
-      return err("Could not create socket path")
+    guard let url = URL(string: path) else {
+      err("Could not connect to \(path)")
     }
 
     let socket = WebSocket(url: url)
     socket.onConnect = {
-      log("Connected to '\(self.plugin.value)', awaiting stream…")
+      info("Connected to BitBar, waiting for output...")
     }
 
     socket.onDisconnect = { (error: NSError?) in
       if let msg = error {
         err("Disconnect due to error: \(msg.localizedDescription)")
-        exit(1)
       } else {
         log("Disconnect from host")
-        exit(0)
       }
     }
 
-    socket.onText = log
+    socket.onText = { raw in
+      guard let data = raw.data(using: .utf8) else {
+        return Log.std(err: "Could not convert websocket data", .error)
+      }
+      let json = JSON(data: data)
+      let level = json["level"].string ?? "warning"
+      let message = json["message"].string ?? raw
+      Log.std(out: message, level)
+    }
+
     socket.connect()
     CFRunLoopRun()
   }
