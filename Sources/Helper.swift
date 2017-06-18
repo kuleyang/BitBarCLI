@@ -3,7 +3,7 @@ import Foundation
 import SwiftyJSON
 
 let stderr = FileHandle.standardError
-let hostDomain = "localhost:8080"
+let hostDomain = "localhost:9112"
 let host = "http://\(hostDomain)"
 
 func info(_ msg: String) {
